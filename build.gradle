@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: "4.+"
+    testCompile "org.mockito:mockito-core:1.+"
+}
+
+repositories {
+    mavenCentral()
+}
+
+jacocoTestReport {
+    doFirst{
+        classDirectories = fileTree(
+                dir: './build/classes/main/stockticker',
+		excludes: ['**/ui/*.class']
+        )
+    }
+
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "build/reports/coverageHtml"
+    }
+}
+
+task(runui, dependsOn: 'classes', type: JavaExec) {
+    main = 'stockticker.ui.StockTickerDriver'
+    classpath = sourceSets.main.runtimeClasspath
+  }
+
+defaultTasks 'clean', 'test', 'jacocoTestReport'
